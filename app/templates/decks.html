@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Decks</h2>
+  <h2>There are now three migration files</h2>
+
+  <ul>
+    {% for deck in decks %}
+      <li>
+        <strong>{{ deck.name }}</strong>
+        <a href="/decks/{{ deck.id }}">View deck</a>
+        {% if deck.description %}
+          - {{ deck.description }}
+        {% endif %}
+      </li>
+      <a href="/decks/{{ deck.id }}/edit">Edit</a>
+      <form method="post" action="/decks/{{ deck.id }}/delete">
+          <button type="submit">Delete deck</button>
+      </form>
+    {% endfor %}
+  </ul>
+  <h2>Create a Form</h2>
+  <form method="post" action="/decks">
+    <label for="name">Deck Name</label>
+    <input id="name" name="name" type="text" />
+    <label for="description">Description</label>
+    <textarea name="description" id="description"></textarea>
+    <button type="submit">Create deck</button>
+  </form>
+{% endblock %}

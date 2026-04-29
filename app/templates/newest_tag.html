@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Newest Tag</h2>
+
+    {% if tag %}
+      <p>
+        <strong>{{ tag.name }}</strong>
+      </p>
+    {% else %}
+      <p>No tags found.</p>
+    {% endif %}
+{% endblock %}
