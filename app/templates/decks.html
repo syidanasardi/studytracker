@@ -12,11 +12,11 @@
         {% if deck.description %}
           - {{ deck.description }}
         {% endif %}
+        <a href="/decks/{{ deck.id }}/edit">Edit</a>
+        <form method="post" action="/decks/{{ deck.id }}/delete">
+            <button type="submit">Delete deck</button>
+        </form>
       </li>
-      <a href="/decks/{{ deck.id }}/edit">Edit</a>
-      <form method="post" action="/decks/{{ deck.id }}/delete">
-          <button type="submit">Delete deck</button>
-      </form>
     {% endfor %}
   </ul>
   <h2>Create a Form</h2>

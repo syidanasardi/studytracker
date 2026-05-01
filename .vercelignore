@@ -1,0 +1,10 @@
+.git
+.venv
+.vscode
+.DS_Store
+*.pyc
+__pycache__
+Dockerfile
+compose.yaml
+start.sh
+migrations/

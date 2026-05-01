@@ -10,8 +10,9 @@ from .queries.tags import create_tag_query, fetch_tag, fetch_all_tags, fetch_new
 from .queries.decks import fetch_all_decks, fetch_newest_deck, fetch_deck, create_deck_query, delete_deck_query, update_deck_query
 
 app = FastAPI()
-templates = Jinja2Templates(directory="app/templates")
-
+import os
+template_dir = os.path.join(os.path.dirname(__file__), "templates")
+templates = Jinja2Templates(directory=template_dir)
 
 def render(request: Request, template_name: str, **context):
     return templates.TemplateResponse(
@@ -72,21 +73,21 @@ def update_deck(deck_id: int, name: str = Form(...), description: str = Form(...
 @app.get("/decks/{deck_id}")
 def show_deck(request: Request, deck_id: int):
     with get_connection() as conn:
-        deck = conn.execute(t"""
+        deck = conn.execute("""
             SELECT id, name, description
             FROM decks
-            WHERE id = {deck_id}
-            """).fetchone()
+            WHERE id = %s
+            """, (deck_id,)).fetchone()
 
         if deck is None:
             return RedirectResponse("/decks", status_code=303)
 
-        cards = conn.execute(t"""
+        cards = conn.execute("""
             SELECT id, question, answer
             FROM cards
-            WHERE deck_id = {deck_id}
+            WHERE deck_id = %s
             ORDER BY id
-            """).fetchall()
+            """, (deck_id,)).fetchall()
 
     return render(request, "deck_detail.html", deck=deck, cards=cards)
 
@@ -98,10 +99,10 @@ def create_card(
     answer: str = Form(...),
 ):
     with get_connection() as conn:
-        conn.execute(t"""
+        conn.execute("""
             INSERT INTO cards (deck_id, question, answer)
-            VALUES ({deck_id}, {question}, {answer})
-            """)
+            VALUES (%s, %s, %s)
+            """, (deck_id, question, answer))
 
     return RedirectResponse(f"/decks/{deck_id}", status_code=303)
 
@@ -109,7 +110,7 @@ def create_card(
 @app.get("/cards/{card_id}")
 def show_card(request: Request, card_id: int):
     with get_connection() as conn:
-        card = conn.execute(t"""
+        card = conn.execute("""
             SELECT
               c.id,
               c.question,
@@ -118,23 +119,23 @@ def show_card(request: Request, card_id: int):
               d.name AS deck_name
             FROM cards AS c
             INNER JOIN decks AS d ON d.id = c.deck_id
-            WHERE c.id = {card_id}
-            """).fetchone()
+            WHERE c.id = %s
+            """, (card_id,)).fetchone()
 
         if card is None:
             return RedirectResponse("/decks", status_code=303)
 
-        tags = conn.execute(t"""
+        tags = conn.execute("""
             SELECT
               t.id,
               t.name
             FROM card_tags AS ct
             INNER JOIN tags AS t ON t.id = ct.tag_id
-            WHERE ct.card_id = {card_id}
+            WHERE ct.card_id = %s
             ORDER BY t.name
-            """).fetchall()
+            """, (card_id,)).fetchall()
 
-        available_tags = conn.execute(t"""
+        available_tags = conn.execute("""
             SELECT
               t.id,
               t.name
@@ -142,11 +143,11 @@ def show_card(request: Request, card_id: int):
             WHERE NOT EXISTS (
               SELECT 1
               FROM card_tags AS ct
-              WHERE ct.card_id = {card_id}
+              WHERE ct.card_id = %s             
                 AND ct.tag_id = t.id
             )
             ORDER BY t.name
-            """).fetchall()
+            """, (card_id,)).fetchall()
 
     return render(
         request,
@@ -159,11 +160,11 @@ def show_card(request: Request, card_id: int):
 @app.post("/cards/{card_id}/tags")
 def add_tag_to_card(card_id: int, tag_id: int = Form(...)):
     with get_connection() as conn:
-        conn.execute(t"""
+        conn.execute("""
             INSERT INTO card_tags (card_id, tag_id)
-            VALUES ({card_id}, {tag_id})
+            VALUES (%s, %s)
             ON CONFLICT DO NOTHING
-            """)
+            """, (card_id, tag_id))
 
     return RedirectResponse(f"/cards/{card_id}", status_code=303)
 

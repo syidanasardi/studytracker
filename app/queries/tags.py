@@ -9,22 +9,25 @@ def fetch_newest_tag(conn):
     ).fetchone()
 
 def create_tag_query(conn, name):
-    return conn.execute(t"""
-                    INSERT INTO tags (name)
-                    VALUES ({name})
-                    """)
+    return conn.execute(
+        "INSERT INTO tags (name) VALUES (%s)",
+        (name,)
+    )
 
 def delete_tag_query(conn, tag_id):
-    return conn.execute(t"DELETE FROM tags WHERE id = {tag_id}")
+    return conn.execute(
+        "DELETE FROM tags WHERE id = %s",
+        (tag_id,)
+    )
 
 def fetch_tag(conn, tag_id):
     return conn.execute(
-            t"SELECT id, name FROM tags WHERE id = {tag_id}"
-        ).fetchone()
+        "SELECT id, name FROM tags WHERE id = %s",
+        (tag_id,)
+    ).fetchone()
 
 def update_tag_query(conn, tag_id, name):
-    return conn.execute(t"""
-        UPDATE tags
-        SET name = {name}
-        WHERE id = {tag_id}
-    """)
+    return conn.execute(
+        "UPDATE tags SET name = %s WHERE id = %s",
+        (name, tag_id)
+    )

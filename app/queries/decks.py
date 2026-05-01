@@ -12,29 +12,27 @@ def fetch_newest_deck(conn):
 
 def fetch_deck(conn, deck_id):
     return conn.execute(
-        t"SELECT id, name, description FROM decks WHERE id = {deck_id}"
+        "SELECT id, name, description FROM decks WHERE id = %s",
+        (deck_id,)
     ).fetchone()
 
 
 def create_deck_query(conn, name, description):
     return conn.execute(
-        t"INSERT INTO decks (name, description) VALUES ({name}, {description})"
+        "INSERT INTO decks (name, description) VALUES (%s, %s)",
+        (name, description)
     )
 
 
 def delete_deck_query(conn, deck_id):
     return conn.execute(
-        t"""
-        DELETE FROM decks WHERE id = {deck_id}
-        """
+        "DELETE FROM decks WHERE id = %s",
+        (deck_id,)
     )
 
 
 def update_deck_query(conn, deck_id, name, description):
     return conn.execute(
-        t"""
-        UPDATE decks
-        SET name = {name}, description = {description}
-        WHERE id = {deck_id}
-        """
+        "UPDATE decks SET name = %s, description = %s WHERE id = %s",
+        (name, description, deck_id)
     )
