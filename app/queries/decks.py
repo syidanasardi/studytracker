@@ -24,7 +24,9 @@ def create_deck_query(conn, name, description):
 
 def delete_deck_query(conn, deck_id):
     return conn.execute(
-        t"DELETE FROM decks WHERE id = {deck_id}"
+        t"""
+        DELETE FROM decks WHERE id = {deck_id}
+        """
     )
 
 
