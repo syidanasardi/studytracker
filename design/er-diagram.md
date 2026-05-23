@@ -1,14 +1,19 @@
 # ER Diagram
 erDiagram
+
     decks ||--o{ cards
+
     cards ||--o{ card_tags
+
     tags ||--o{ tags
+    
+    cards ||--o{ reviews
 
     decks {
         integer id
         string name
         string description
-        date created_at
+        timestamp created_at
     }
 
     cards {
@@ -16,7 +21,7 @@ erDiagram
         integer deck_id
         string question
         string answer
-        date created_at
+        timestamp created_at
     }
 
     card_tags {
@@ -27,6 +32,13 @@ erDiagram
     tags {
         integer id
         string tag
-        date created_at
+        timestamp created_at
+    }
+
+    reviews {
+        integer id
+        integer card_id
+        integer rating
+        timestamp reviewed_at
     }
 

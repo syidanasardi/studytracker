@@ -1,12 +1,12 @@
-def fetch_all_decks(conn):
+def fetch_all_decks(conn, user_id):
     return conn.execute(
-        "SELECT id, name, description FROM decks ORDER BY name"
+        t"SELECT id, name, description FROM decks WHERE user_id = {user_id} ORDER BY name"
     ).fetchall()
 
 
-def fetch_newest_deck(conn):
+def fetch_newest_deck(conn, user_id):
     return conn.execute(
-        "SELECT id, name, description FROM decks ORDER BY created_at DESC, id DESC LIMIT 1"
+        t"SELECT id, name, description FROM decks WHERE user_id = {user_id} ORDER BY created_at DESC, id DESC LIMIT 1"
     ).fetchone()
 
 
@@ -17,10 +17,9 @@ def fetch_deck(conn, deck_id):
     ).fetchone()
 
 
-def create_deck_query(conn, name, description):
+def create_deck_query(conn, name, description, user_id):
     return conn.execute(
-        "INSERT INTO decks (name, description) VALUES (%s, %s)",
-        (name, description)
+        t"INSERT INTO decks (name, description, user_id) VALUES ({name}, {description}, {user_id})"
     )
 
 
