@@ -6,12 +6,20 @@
   </head>
   <body>
     <h1>Study Tracker</h1>
+    {% if current_user %}
+      <form method="post" action="/logout" style="display:inline">
+        <button type="submit">Log out ({{ current_user.email }})</button>
+      </form>
+    {% else %}
+      <a href="/login">Log in</a> | <a href="/signup">Sign up</a>
+    {% endif %}
 
     <nav>
       <a href="/tags">Tags</a>
       <a href="/tags/newest">Newest tag</a>
       <a href="/decks">Decks</a>
       <a href="/decks/newest">Newest deck</a>
+      <a href="/dashboard">Dashboard</a>
     </nav>
 
     {% block content %}{% endblock %}
